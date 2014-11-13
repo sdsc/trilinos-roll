@@ -33,11 +33,11 @@ you'll need to add the appropriate directory to your PATH environment variable.
 
 ## Building
 
-To build the trilinos-roll, execute these instructions on a Rocks development
+To build the trilinos-roll, execute this on a Rocks development
 machine (e.g., a frontend or development appliance):
 
 ```shell
-% make default 2>&1 | tee build.log
+% make 2>&1 | tee build.log
 ```
 
 A successful build will create the file `trilinos-*.disk1.iso`.  If you built the
