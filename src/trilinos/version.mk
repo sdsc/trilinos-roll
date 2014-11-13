@@ -12,9 +12,9 @@ ifndef ROLLPY
   ROLLPY = python
 endif
 
-NAME           = trilinos_$(COMPILERNAME)_$(MPINAME)
+NAME           = sdsc-trilinos_$(COMPILERNAME)_$(MPINAME)
 VERSION        = 11.10.2
-RELEASE        = 1
+RELEASE        = 2
 PKGROOT        = /opt/trilinos/$(COMPILERNAME)/$(MPINAME)
 
 SRC_SUBDIR     = trilinos

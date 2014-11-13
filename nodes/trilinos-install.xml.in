@@ -11,8 +11,8 @@ Copyright (c) 2000 - 2014 The Regents of the University of California.
 All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 </copyright>
 
-<package>trilinos_COMPILERNAME_MPINAME</package>
-<package>trilinos_COMPILERNAME-modules</package>
-<package>trilinos-roll-test</package>
+<package>sdsc-trilinos_COMPILERNAME_MPINAME</package>
+<package>sdsc-trilinos_COMPILERNAME-modules</package>
+<package>sdsc-trilinos-roll-test</package>
 
 </kickstart>
