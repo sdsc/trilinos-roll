@@ -65,8 +65,7 @@ include $(SDSCDEVEL)/Pull.mk
 include $(SDSCDEVEL)/Rules.mk
 
 SWIG_CACHE = $(REDHAT.ROOT)/cache/build-swig
-
-LICENSE_FILES = $(SOURCE_DIR)/LICENSE trilinos-licenses.html
+SWIG_LICENSE_FILES = COPYRIGHT LICENSE LICENSE-GPL README
 
 $(NAME).spec: DESCRIPTION LICENSE
 
@@ -82,10 +81,12 @@ DESCRIPTION:
 	) > $@
 
 LICENSE: $(SRC_DIRS)
-	#if ! grep -q "GNU GENERAL PUBLIC LICENSE" $(SOURCE_DIR)/COPYING; then \
-	#  exit 2; \
-	#fi
-	echo BSD and LPGL and others > $@
+	cp license-files/license.html $(SOURCE_DIR)/
+	for F in $(SWIG_LICENSE_FILES); do \
+	  cp swig*/$$F $(SOURCE_DIR)/swig-$$F; \
+	done
+	$(CHECK_LICENSE_FILES)
+	echo BSD and LPGL and GPL and others > $@
 
 build: $(SRC_DIRS)
 	mkdir $(SOURCE_DIR)/build
