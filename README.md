@@ -22,14 +22,19 @@ Rocks development machine.
 
 ## Dependencies
 
-Intel MKL libraries.  If you're building with the Intel compiler or there is
-an mkl modulefile present (the mkl-roll provides this), then the build process
-will pick these up automatically.  Otherwise, you'll need to set the MKL_ROOT
-environment variable to the library location.
+The sdsc-roll must be installed on the build machine, since the build process
+depends on make include files provided by that roll.
 
-cmake.  If there is an cmake modulefile present (the cmake-roll provides
-this), then the build process will pick this up automatically.  Otherwise,
-you'll need to add the appropriate directory to your PATH environment variable.
+The roll sources assume that modulefiles provided by SDSC compiler and mpi
+rolls are available, but it will build without them as long as the environment
+variables they provide are otherwise defined.
+
+The build process requires cmake and the MKL libraries and assumes that the
+modulefiles provided by the SDSC cmake-roll and mkl-roll (or intel-roll) are
+available.  It will build without
+the modulefiles as long as the environment variables they provide are otherwise
+defined.
+
 
 ## Building
 
