@@ -68,11 +68,15 @@ END
       close(OUT);
       $output = `/bin/bash $TESTFILE.sh 2>&1`;
       like($output, qr/$TESTFILE.exe/,
-           "Trilinos/$compilername/$mpi compilation");
+           "trilinos/$compilername/$mpi compilation");
       like($output, qr/Teuchos in Trilinos [\d\.]+/,
-           "Trilinos/$compilername/$mpi run");
+           "trilinos/$compilername/$mpi run");
     }
   }
+  $output = `module load $compiler trilinos; echo \$TRILINOSHOME 2>&1`;
+  my $firstmpi = $MPIS[0];
+  $firstmpi =~ s#/.*##;
+  like($output, qr#/opt/trilinos/$compiler/$firstmpi#, 'trilinos modulefile defaults to first mpi');
 }
 
 `rm -fr $TESTFILE*`;
