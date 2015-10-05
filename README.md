@@ -30,7 +30,7 @@ rolls are available, but it will build without them as long as the environment
 variables they provide are otherwise defined.
 
 The build process requires cmake and the MKL libraries and assumes that the
-modulefiles provided by the SDSC cmake-roll and mkl-roll (or intel-roll) are
+modulefiles provided by the SDSC cmake-roll and intel-roll are
 available.  It will build without
 the modulefiles as long as the environment variables they provide are otherwise
 defined.
