@@ -35,6 +35,14 @@ available.  It will build without
 the modulefiles as long as the environment variables they provide are otherwise
 defined.
 
+The roll supports specifying building with/for python versions other than
+the one included with the o/s.  To use this feature, specify a `ROLLPY` make
+variable that includes a python modulefile, e.g.,
+
+```shell
+% make ROLLPY=opt-python 2>&1 | tee build.log
+```
+
 
 ## Building
 
