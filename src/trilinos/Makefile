@@ -78,6 +78,7 @@ DESCRIPTION:
 	  $(DESCRIBE_MKL); \
 	  $(DESCRIBE_MPI); \
 	  $(DESCRIBE_PYTHON) \
+	  $(DESCRIBE_NETCDF) \
 	) > $@
 
 LICENSE: $(SRC_DIRS)
@@ -94,6 +95,7 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MKL); \
+          $(MODULE_LOAD_NETCDF); \
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
 	  $(MODULE_LOAD_MPI); \
 	  $(MODULE_LOAD_PYTHON); \
@@ -125,15 +127,19 @@ build: $(SRC_DIRS)
 	        -DDART_TESTING_TIMEOUT:STRING=600 \
 	        -DTPL_ENABLE_MPI:BOOL=ON \
 	        -DMPI_BASE_DIR:PATH=${MPIHOME} \
-	        -DMPI_USE_COMPILER_WRAPPERS:BOOL=ON \
+	        -DMPI_USE_COMPILER_WRAPPERS=ON \
 	        -DTrilinos_EXTRA_LINK_FLAGS:STRING="" \
 	        -DMPI_EXEC_MAX_NUMPROCS:STRING=8 \
 	        -DMPI_EXEC:FILEPATH="$${MPIHOME}/bin/mpirun" \
 	        -DTPL_MPI_INCLUDE_DIRS:INTERNAL="$${MPIHOME}/include" \
 	        -DTPL_MPI_LIBRARIES:INTERNAL="$${MPIHOME}/lib" \
-	        -DCMAKE_VERBOSE_MAKEFILE:BOOL=TRUE \
+	        -DCMAKE_VERBOSE_MAKEFILE=TRUE \
 	        -DTrilinos_VERBOSE_CONFIGURE:BOOL=TRUE \
 	        -DBUILD_SHARED_LIBS:BOOL=ON \
+                -DTPL_Netcdf_INCLUDE_DIRS=$${NETCDFHOME}/include \
+                -DTPL_Netcdf_LIBRARIES=$${NETCDFHOME}/lib \
+                -DTPL_Netcdf_Enables_Netcdf4=ON \
+                -DTPL_Netcdf_Enables_PNetcdf=ON \
 	        $(PWD)/$(SOURCE_DIR); \
 	  $(MAKE) -j 16 \
 	)
