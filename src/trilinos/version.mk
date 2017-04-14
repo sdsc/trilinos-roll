@@ -13,8 +13,8 @@ ifndef ROLLPY
 endif
 
 NAME           = sdsc-trilinos_$(COMPILERNAME)_$(MPINAME)
-VERSION        = 11.12.1
-RELEASE        = 2
+VERSION        = 12.10.1
+RELEASE        = 0
 PKGROOT        = /opt/trilinos/$(COMPILERNAME)/$(MPINAME)
 
 SRC_SUBDIR     = trilinos
@@ -27,7 +27,7 @@ SOURCE_DIR     = $(SOURCE_PKG:%.$(SOURCE_SUFFIX)=%)
 
 SWIG_NAME      = swig
 SWIG_SUFFIX    = tar.gz
-SWIG_VERSION   = 3.0.3
+SWIG_VERSION   = 3.0.12
 SWIG_PKG       = $(SWIG_NAME)-$(SWIG_VERSION).$(SWIG_SUFFIX)
 SWIG_DIR       = $(SWIG_PKG:%.$(SWIG_SUFFIX)=%)
 
