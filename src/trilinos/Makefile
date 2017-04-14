@@ -137,7 +137,7 @@ build: $(SRC_DIRS)
 	        -DTrilinos_VERBOSE_CONFIGURE:BOOL=TRUE \
 	        -DBUILD_SHARED_LIBS:BOOL=ON \
                 -DTPL_Netcdf_INCLUDE_DIRS=$${NETCDFHOME}/include \
-                -DTPL_Netcdf_LIBRARIES=$${NETCDFHOME}/lib \
+                -DTPL_Netcdf_LIBRARIES="$${NETCDFHOME}/lib/libnetcdf.a $${NETCDFHOME}/lib/libpnetcdf.a" \
                 -DTPL_Netcdf_Enables_Netcdf4=ON \
                 -DTPL_Netcdf_Enables_PNetcdf=ON \
 	        $(PWD)/$(SOURCE_DIR); \
