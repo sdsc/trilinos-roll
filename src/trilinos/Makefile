@@ -79,6 +79,7 @@ DESCRIPTION:
 	  $(DESCRIBE_MPI); \
 	  $(DESCRIBE_PYTHON) \
 	  $(DESCRIBE_NETCDF) \
+	  $(DESCRIBE_BOOST) \
 	) > $@
 
 LICENSE: $(SRC_DIRS)
@@ -99,6 +100,7 @@ build: $(SRC_DIRS)
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
 	  $(MODULE_LOAD_MPI); \
           $(MODULE_LOAD_NETCDF); \
+          $(MODULE_LOAD_BOOST); \
 	  if test ! -e $(SWIG_CACHE); then \
 	    cd $(SWIG_DIR); \
 	    ./configure CC=$(CC) CXX=$(CXX) --prefix=$(SWIG_CACHE); \
