@@ -93,6 +93,7 @@ build: $(SRC_DIRS)
 	mkdir $(SOURCE_DIR)/build
 	( \
           module load python; \
+	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MKL); \
           $(MODULE_LOAD_NETCDF); \
