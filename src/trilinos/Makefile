@@ -140,8 +140,8 @@ build: $(SRC_DIRS)
                 -DTPL_Netcdf_LIBRARIES="$${NETCDFHOME}/lib/libnetcdf.a $${NETCDFHOME}/lib/libpnetcdf.a" \
                 -DTPL_Netcdf_Enables_Netcdf4=ON \
                 -DTPL_Netcdf_Enables_PNetcdf=ON \
-                -DTPL_Boost_INCLUDE_DIRS=$${BOOSTHOME}/include; \
-                -DTPL_Boost_LIBRARIES=$${BOOSTHOME}/lib; \
+                -DTPL_Boost_INCLUDE_DIRS=$${BOOSTHOME}/include \
+                -DTPL_Boost_LIBRARIES=$${BOOSTHOME}/lib \
 	        $(PWD)/$(SOURCE_DIR); \
 	  $(MAKE) -j 16 \
 	)
