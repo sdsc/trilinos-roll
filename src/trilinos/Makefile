@@ -112,6 +112,7 @@ build: $(SRC_DIRS)
 	  export PATH=$(SWIG_CACHE)/bin:$${PATH}; \
 	  cmake -DCMAKE_INSTALL_PREFIX:PATH=$(PKGROOT) \
 	        -DCMAKE_BUILD_TYPE:STRING=DEBUG \
+                -DCMAKE_CXX_FLAGS="std=c++11" \
 	        -DCMAKE_Fortran_COMPILER:FILEPATH=$${MPIHOME}/bin/mpif90 \
 	        -DCMAKE_CXX_COMPILER:FILEPATH=$${MPIHOME}/bin/mpicxx \
 	        -DCMAKE_C_COMPILER:FILEPATH=$${MPIHOME}/bin/mpicc \
