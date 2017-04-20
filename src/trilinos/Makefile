@@ -92,13 +92,12 @@ LICENSE: $(SRC_DIRS)
 build: $(SRC_DIRS)
 	mkdir $(SOURCE_DIR)/build
 	( \
-	  $(MODULE_LOAD_CC); \
+          module load python; \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MKL); \
           $(MODULE_LOAD_NETCDF); \
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
 	  $(MODULE_LOAD_MPI); \
-	  $(MODULE_LOAD_PYTHON); \
 	  if test ! -e $(SWIG_CACHE); then \
 	    cd $(SWIG_DIR); \
 	    ./configure CC=$(CC) CXX=$(CXX) --prefix=$(SWIG_CACHE); \
