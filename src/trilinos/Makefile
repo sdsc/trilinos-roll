@@ -91,7 +91,7 @@ LICENSE: $(SRC_DIRS)
 	echo BSD and LPGL and GPL and others > $@
 
 build: $(SRC_DIRS)
-	mkdir $(SOURCE_DIR)/build
+	$(call BIND_MOUNT,/b,$(PWD)/$(SOURCE_DIR))
 	( \
           module load python; \
 	  $(MODULE_LOAD_CC); \
@@ -100,15 +100,17 @@ build: $(SRC_DIRS)
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
 	  $(MODULE_LOAD_MPI); \
           $(MODULE_LOAD_NETCDF); \
-          $(MODULE_LOAD_BOOST); \
+          module load boost; \
 	  if test ! -e $(SWIG_CACHE); then \
 	    cd $(SWIG_DIR); \
 	    ./configure CC=$(CC) CXX=$(CXX) --prefix=$(SWIG_CACHE); \
-	    $(MAKE) -j 16; \
-	    $(MAKE) -j 16 install; \
+	    $(MAKE) -j 16 ; \
+	    $(MAKE)  -j 16 install; \
 	    cd ..; \
 	  fi; \
-	  cd $(SOURCE_DIR)/build; \
+	  cd /b; \
+          mkdir build; \
+          cd build; \
 	  MKLLINK="-L$${MKLLIB} -lmkl_intel_lp64 -lmkl_sequential -lmkl_core \
 	           -lpthread"; \
 	  export PATH=$(SWIG_CACHE)/bin:$${PATH}; \
@@ -138,15 +140,18 @@ build: $(SRC_DIRS)
 	        -DCMAKE_VERBOSE_MAKEFILE=TRUE \
 	        -DTrilinos_VERBOSE_CONFIGURE:BOOL=TRUE \
 	        -DBUILD_SHARED_LIBS:BOOL=ON \
+                -DTPL_Netcdf_PARALLEL=ON \
                 -DTPL_Netcdf_INCLUDE_DIRS=$${NETCDFHOME}/include \
-                -DTPL_Netcdf_LIBRARIES="$${NETCDFHOME}/lib/libnetcdf.a $${NETCDFHOME}/lib/libpnetcdf.a" \
+                -DTPL_Netcdf_LIBRARY_DIRS=$${NETCDFHOME}/lib \
                 -DTPL_Netcdf_Enables_Netcdf4=ON \
                 -DTPL_Netcdf_Enables_PNetcdf=ON \
                 -DTPL_Boost_INCLUDE_DIRS=$${BOOSTHOME}/include \
-                -DTPL_Boost_LIBRARIES=$${BOOSTHOME}/lib \
-	        $(PWD)/$(SOURCE_DIR); \
-	  $(MAKE) -j 16 \
+                -DBoostLib_INCLUDE_DIRS=$${BOOSTHOME}/include \
+                -DBoostLib_LIBRARY_DIRS=$${BOOSTHOME}/lib \
+	        $(PWD)/$(SOURCE_DIR) ; \
+	  $(MAKE) VERBOSE=1 -j 16; \
 	)
+	$(call BIND_UMOUNT,/b)
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
@@ -154,11 +159,13 @@ install::
 	# from incorporating $(ROOT) in binary files.
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
 	$(PKGROOT_BIND_MOUNT)
+	$(call BIND_MOUNT,/b,$(PWD)/$(SOURCE_DIR))
 	( \
 	  $(MODULE_LOAD_PYTHON); \
 	  cd $(SOURCE_DIR)/build; \
 	  make install \
 	)
+	$(call BIND_UMOUNT,/b)
 	$(PKGROOT_BIND_UMOUNT)
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
