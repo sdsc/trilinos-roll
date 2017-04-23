@@ -91,7 +91,6 @@ LICENSE: $(SRC_DIRS)
 	echo BSD and LPGL and GPL and others > $@
 
 build: $(SRC_DIRS)
-	$(call BIND_MOUNT,/b,$(PWD)/$(SOURCE_DIR))
 	( \
           module load python; \
 	  $(MODULE_LOAD_CC); \
@@ -108,7 +107,7 @@ build: $(SRC_DIRS)
 	    $(MAKE)  -j 16 install; \
 	    cd ..; \
 	  fi; \
-	  cd /b; \
+	  cd $(SOURCE_DIR); \
           mkdir build; \
           cd build; \
 	  MKLLINK="-L$${MKLLIB} -lmkl_intel_lp64 -lmkl_sequential -lmkl_core \
@@ -151,7 +150,6 @@ build: $(SRC_DIRS)
 	        $(PWD)/$(SOURCE_DIR) ; \
 	  $(MAKE) VERBOSE=1 -j 16; \
 	)
-	$(call BIND_UMOUNT,/b)
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
@@ -159,13 +157,11 @@ install::
 	# from incorporating $(ROOT) in binary files.
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
 	$(PKGROOT_BIND_MOUNT)
-	$(call BIND_MOUNT,/b,$(PWD)/$(SOURCE_DIR))
 	( \
 	  $(MODULE_LOAD_PYTHON); \
 	  cd $(SOURCE_DIR)/build; \
 	  make install \
 	)
-	$(call BIND_UMOUNT,/b)
 	$(PKGROOT_BIND_UMOUNT)
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
