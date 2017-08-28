@@ -23,22 +23,6 @@ if($appliance =~ /$installedOnAppliancesPattern/) {
   ok(! -d "/opt/trilinos", "trilinos not installed");
 }
 
-SKIP: {
-
-  skip "trilinos not installed", 3 if ! -d "/opt/trilinos";
-  foreach my $compiler(@COMPILERS) {
-    my $compilername = (split('/', $compiler))[0];
-    my $path = "/opt/modulefiles/applications/.$compilername/trilinos";
-    `/bin/ls $path/[0-9]* 2>&1`;
-    ok($? == 0, "trilinos/$compilername module installed");
-    `/bin/ls $path/.version.[0-9]* 2>&1`;
-    ok($? == 0, "trilinos/$compilername version module installed");
-    ok(-l "$path/.version",
-       "trilinos/$compilername version module link created");
-  }
-
-}
-
 open(OUT, ">$TESTFILE.cxx");
 print OUT <<END;
 #include "Teuchos_Version.hpp"
@@ -77,6 +61,17 @@ END
   my $firstmpi = $MPIS[0];
   $firstmpi =~ s#/.*##;
   like($output, qr#/opt/trilinos/$compiler/$firstmpi#, 'trilinos modulefile defaults to first mpi');
+}
+
+SKIP: {
+ 
+  `/bin/ls /opt/modulefiles/applications/trilinos/[0-9]* 2>&1`;
+  ok($? == 0, "trilinos module installed");
+  `/bin/ls /opt/modulefiles/applications/trilinos/.version.[0-9]* 2>&1`;
+  ok($? == 0, "trilinos version module installed");
+  ok(-l "/opt/modulefiles/applications/trilinos/.version",
+     "trilinos version module link created");
+
 }
 
 `rm -fr $TESTFILE*`;
