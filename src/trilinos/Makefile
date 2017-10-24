@@ -88,6 +88,9 @@ LICENSE: $(SRC_DIRS)
 	for F in $(SWIG_LICENSE_FILES); do \
 	  cp swig*/$$F $(SOURCE_DIR)/swig-$$F; \
 	done
+	for F in $(MATIO_LICENSE_FILES); do \
+	  cp matio*/$$F $(SOURCE_DIR)/matio-$$F; \
+	done
 	$(CHECK_LICENSE_FILES)
 	echo BSD and LPGL and GPL and others > $@
 
