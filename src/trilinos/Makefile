@@ -65,7 +65,9 @@ include $(SDSCDEVEL)/Pull.mk
 include $(SDSCDEVEL)/Rules.mk
 
 SWIG_CACHE = $(REDHAT.ROOT)/cache/build-swig
+MATIO_CACHE = $(REDHAT.ROOT)/cache/build-matio
 SWIG_LICENSE_FILES = COPYRIGHT LICENSE LICENSE-GPL README
+MATIO_LICENSE_FILES = COPYING README
 
 $(NAME).spec: DESCRIPTION LICENSE
 
@@ -83,7 +85,6 @@ DESCRIPTION:
 	) > $@
 
 LICENSE: $(SRC_DIRS)
-	cp license-files/license.html $(SOURCE_DIR)/
 	for F in $(SWIG_LICENSE_FILES); do \
 	  cp swig*/$$F $(SOURCE_DIR)/swig-$$F; \
 	done
@@ -107,14 +108,20 @@ build: $(SRC_DIRS)
 	    $(MAKE)  -j 16 install; \
 	    cd ..; \
 	  fi; \
-	  cd $(SOURCE_DIR); \
+          cd $(MATIO_DIR); \
+          bash configure CC=$(CC) CXX=$(CXX) --prefix=$(MATIO_CACHE); \
+          make; \
+          make install; \
+	  cd ../$(SOURCE_DIR); \
           mkdir build; \
           cd build; \
 	  MKLLINK="-L$${MKLLIB} -lmkl_intel_lp64 -lmkl_sequential -lmkl_core \
 	           -lpthread"; \
 	  export PATH=$(SWIG_CACHE)/bin:$${PATH}; \
+          export LDFLAGS="-lrt -lirc -L$${NETCDFHOME}/lib -lnetcdf -L$(MATIO_CACHE)/lib -lmatio"; \
 	  cmake -DCMAKE_INSTALL_PREFIX:PATH=$(PKGROOT) \
 	        -DCMAKE_BUILD_TYPE:STRING=DEBUG \
+                -DTrilinos_CXX11_FLAGS="-std=c++11" \
 	        -DCMAKE_Fortran_COMPILER:FILEPATH=$${MPIHOME}/bin/mpif90 \
 	        -DCMAKE_CXX_COMPILER:FILEPATH=$${MPIHOME}/bin/mpicxx \
 	        -DCMAKE_C_COMPILER:FILEPATH=$${MPIHOME}/bin/mpicc \
@@ -125,6 +132,7 @@ build: $(SRC_DIRS)
 	        -DTrilinos_ENABLE_ForTrilinos:BOOL=OFF \
 	        -DTrilinos_ENABLE_TESTS:BOOL=ON \
 	        -DTrilinos_ENABLE_PyTrilinos:BOOL=ON \
+                -DTrilinos_ENABLE_SEACAS:BOOL=ON \
 	        -DTPL_BLAS_LIBRARIES:STRING="$${MKLLINK}" \
 	        -DTPL_LAPACK_LIBRARIES:STRING="$${MKLLINK}" \
 	        -DDART_TESTING_TIMEOUT:STRING=600 \
@@ -141,12 +149,14 @@ build: $(SRC_DIRS)
 	        -DBUILD_SHARED_LIBS:BOOL=ON \
                 -DTPL_Netcdf_PARALLEL=ON \
                 -DTPL_Netcdf_INCLUDE_DIRS=$${NETCDFHOME}/include \
-                -DTPL_Netcdf_LIBRARY_DIRS=$${NETCDFHOME}/lib \
+                -DTPL_Netcdf_LIBRARIES=$${NETCDFHOME}/lib \
                 -DTPL_Netcdf_Enables_Netcdf4=ON \
                 -DTPL_Netcdf_Enables_PNetcdf=ON \
                 -DTPL_Boost_INCLUDE_DIRS=$${BOOSTHOME}/include \
                 -DBoostLib_INCLUDE_DIRS=$${BOOSTHOME}/include \
                 -DBoostLib_LIBRARY_DIRS=$${BOOSTHOME}/lib \
+                -DTPL_Matio_INCLUDE_DIRS=$(MATIO_CACHE)/include \
+                -DTPL_Matio_LIBRARIES=$(MATIO_CACHE)/include \
 	        $(PWD)/$(SOURCE_DIR) ; \
 	  $(MAKE) VERBOSE=1 -j 16; \
 	)
@@ -160,7 +170,8 @@ install::
 	( \
 	  $(MODULE_LOAD_PYTHON); \
 	  cd $(SOURCE_DIR)/build; \
-	  make install \
+	  make install; \
+          cp -r $(MATIO_CACHE)/lib/* $(PKGROOT)/lib \
 	)
 	$(PKGROOT_BIND_UMOUNT)
 	$(INSTALL_LICENSE_FILES)

@@ -13,7 +13,7 @@ foreach {module} [split $::env(LOADEDMODULES) :] {
     set mpi $module
   }
 }
-setenv TRILINOSHOME /opt/trilinos/ROLLCOMPILER/$mpi
-prepend-path PATH /opt/trilinos/ROLLCOMPILER/$mpi/bin
-prepend-path LD_LIBRARY_PATH /opt/trilinos/ROLLCOMPILER/$mpi/lib
-prepend-path LIBPATH /opt/trilinos/ROLLCOMPILER/$mpi/lib
+setenv TRILINOSHOME /opt/trilinos/COMPILERNAME/$mpi
+prepend-path PATH /opt/trilinos/COMPILERNAME/$mpi/bin
+prepend-path LD_LIBRARY_PATH /opt/trilinos/COMPILERNAME/$mpi/lib
+prepend-path LIBPATH /opt/trilinos/COMPILERNAME/$mpi/lib
