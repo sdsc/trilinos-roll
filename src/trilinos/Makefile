@@ -63,6 +63,11 @@ RPM.EXTRAS=%define __os_install_post /usr/lib/rpm/brp-compress
 include Rules.mk
 include $(SDSCDEVEL)/Pull.mk
 include $(SDSCDEVEL)/Rules.mk
+COMPILERLDFLAGS=
+ifeq ("$(COMPILERNAME)", "intel")
+  COMPILERLDFLAGS = -lirc
+endif
+
 
 SWIG_CACHE = $(REDHAT.ROOT)/cache/build-swig
 MATIO_CACHE = $(REDHAT.ROOT)/cache/build-matio
@@ -121,7 +126,7 @@ build: $(SRC_DIRS)
 	  MKLLINK="-L$${MKLLIB} -lmkl_intel_lp64 -lmkl_sequential -lmkl_core \
 	           -lpthread"; \
 	  export PATH=$(SWIG_CACHE)/bin:$${PATH}; \
-          export LDFLAGS="-lrt -lirc -L$${NETCDFHOME}/lib -lnetcdf -L$(MATIO_CACHE)/lib -lmatio"; \
+          export LDFLAGS="-lrt $(COMPILERLDFLAGS) -L$${NETCDFHOME}/lib -lnetcdf -L$(MATIO_CACHE)/lib -lmatio"; \
 	  cmake -DCMAKE_INSTALL_PREFIX:PATH=$(PKGROOT) \
 	        -DCMAKE_BUILD_TYPE:STRING=DEBUG \
                 -DTrilinos_CXX11_FLAGS="-std=c++11" \
