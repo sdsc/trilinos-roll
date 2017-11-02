@@ -121,8 +121,8 @@ build: $(SRC_DIRS)
           make; \
           make install; \
 	  cd ../$(SOURCE_DIR); \
-          mkdir /tmp/build; \
-          cd /tmp/build; \
+          mkdir build; \
+          cd build; \
 	  MKLLINK="-L$${MKLLIB} -lmkl_intel_lp64 -lmkl_sequential -lmkl_core \
 	           -lpthread"; \
 	  export PATH=$(SWIG_CACHE)/bin:$${PATH}; \
@@ -165,8 +165,9 @@ build: $(SRC_DIRS)
                 -DBoostLib_LIBRARY_DIRS=$${BOOSTHOME}/lib \
                 -DTPL_Matio_INCLUDE_DIRS=$(MATIO_CACHE)/include \
                 -DTPL_Matio_LIBRARIES=$(MATIO_CACHE)/include \
+                -DHAVE_GNUMAKE \
 	        $(PWD)/$(SOURCE_DIR) ; \
-	  $(MAKE) -j 16; \
+	  $(MAKE) VERBOSE=1 -j 16; \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
@@ -180,11 +181,10 @@ install::
 	  cd /tmp/build; \
 	  make install; \
           cp -r $(MATIO_CACHE)/lib/* $(PKGROOT)/lib; \
-          rm -rf /tmp/build \
 	)
 	$(PKGROOT_BIND_UMOUNT)
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SRC_DIRS) /tmp/build DESCRIPTION LICENSE
+	rm -rf $(SRC_DIRS) DESCRIPTION LICENSE
