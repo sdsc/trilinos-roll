@@ -165,7 +165,7 @@ build: $(SRC_DIRS)
                 -DBoostLib_LIBRARY_DIRS=$${BOOSTHOME}/lib \
                 -DTPL_Matio_INCLUDE_DIRS=$(MATIO_CACHE)/include \
                 -DTPL_Matio_LIBRARIES=$(MATIO_CACHE)/include \
-                -DHAVE_GNUMAKE=ON \
+                -DHAVE_GNUMAKE=YES \
 	        $(PWD)/$(SOURCE_DIR) ; \
 	  $(MAKE) VERBOSE=1 -j 16; \
 	)
