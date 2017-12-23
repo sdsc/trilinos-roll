@@ -121,8 +121,8 @@ build: $(SRC_DIRS)
           make; \
           make install; \
 	  cd ../$(SOURCE_DIR); \
-          mkdir build; \
-          cd build; \
+          mkdir /tmp/build; \
+          cd /tmp/build; \
 	  MKLLINK="-L$${MKLLIB} -lmkl_intel_lp64 -lmkl_sequential -lmkl_core \
 	           -lpthread"; \
 	  export PATH=$(SWIG_CACHE)/bin:$${PATH}; \
@@ -166,8 +166,8 @@ build: $(SRC_DIRS)
                 -DTPL_Matio_INCLUDE_DIRS=$(MATIO_CACHE)/include \
                 -DTPL_Matio_LIBRARIES=$(MATIO_CACHE)/include \
                 -DHAVE_GNUMAKE=YES \
-	        $(PWD)/$(SOURCE_DIR) ; \
-	  $(MAKE) VERBOSE=1 -j 16; \
+	        $(CURDIR)/$(SOURCE_DIR) ; \
+	  $(MAKE) -j 16; \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
@@ -183,6 +183,7 @@ install::
           cp -r $(MATIO_CACHE)/lib/* $(PKGROOT)/lib; \
 	)
 	$(PKGROOT_BIND_UMOUNT)
+	rm -rf /tmp/build
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
 
