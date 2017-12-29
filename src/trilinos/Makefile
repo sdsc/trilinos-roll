@@ -101,14 +101,14 @@ LICENSE: $(SRC_DIRS)
 
 build: $(SRC_DIRS)
 	( \
-          module load python; \
+	  $(MODULE_LOAD_PYTHON); \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MKL); \
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
 	  $(MODULE_LOAD_MPI); \
-          $(MODULE_LOAD_NETCDF); \
-          module load boost; \
+	  $(MODULE_LOAD_NETCDF); \
+	  $(MODULE_LOAD_BOOST); \
 	  if test ! -e $(SWIG_CACHE); then \
 	    cd $(SWIG_DIR); \
 	    ./configure CC=$(CC) CXX=$(CXX) --prefix=$(SWIG_CACHE); \
@@ -167,9 +167,17 @@ build: $(SRC_DIRS)
                 -DTPL_Matio_LIBRARIES=$(MATIO_CACHE)/include \
                 -DHAVE_GNUMAKE=YES \
 	        $(CURDIR)/$(SOURCE_DIR) ; \
+	  $(MAKE) -f $(PWD)/Makefile unique-opts; \
 	  $(MAKE) -j 16; \
 	)
 	@echo "::: Package $(NAME) build complete :::"
+
+# The trilinos cmake process produces build lines with dozens of duplicate -I
+# and -L options, resulting in build failures with the shell error message
+# "Argument list too long." This command removes these duplicate options from
+# each .make file in the build tree.
+unique-opts:
+	perl -pi -e 'next if $$_ !~ / -[IL]/; foreach my $$word(split) { next if $$word !~ /^-[IL]/; $$_ =~ s!\Q$$word\E\s!AaBbCc !; $$_ =~ s!\Q$$word\E\s+!!g; $$_ =~ s!AaBbCc!$$word!;}' `find . -name \*.make`; \
 
 install::
 	# Using a bind mount appears to be the only way to prevent the build
