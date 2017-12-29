@@ -12,7 +12,7 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 </copyright>
 
 <package>sdsc-trilinos_COMPILERNAME_MPINAME</package>
-<package>sdsc-trilinos_COMPILERNAME-modules</package>
+<package>sdsc-trilinos-modules</package>
 <package>sdsc-trilinos-roll-test</package>
 
 </kickstart>
