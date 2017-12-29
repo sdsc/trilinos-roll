@@ -54,3 +54,4 @@ setenv TRILINOSHOME /opt/trilinos/$compiler/$mpi
 prepend-path PATH /opt/trilinos/$compiler/$mpi/bin
 prepend-path LD_LIBRARY_PATH /opt/trilinos/$compiler/$mpi/lib
 prepend-path LIBPATH /opt/trilinos/$compiler/$mpi/lib
+module load netcdf
