@@ -1,17 +1,12 @@
-ifndef ROLLCOMPILER
-  ROLLCOMPILER = gnu
-endif
-COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
-
 PACKAGE     = trilinos
 CATEGORY    = applications
 
-NAME        = sdsc-$(PACKAGE)_$(COMPILERNAME)-modules
-RELEASE     = 4
-PKGROOT     = /opt/modulefiles/$(CATEGORY)/.$(COMPILERNAME)/$(PACKAGE)
+NAME        = sdsc-$(PACKAGE)-modules
+RELEASE     = 5
+PKGROOT     = /opt/modulefiles/$(CATEGORY)/$(PACKAGE)
 
 VERSION_SRC = $(REDHAT.ROOT)/src/$(PACKAGE)/version.mk
 VERSION_INC = version.inc
 include $(VERSION_INC)
 
-RPM.EXTRAS  = AutoReq:No
+RPM.EXTRAS  = AutoReq:No\nObsoletes:sdsc-trilinos_gnu-modules,sdsc-trilinos_intel-modules,sdsc-trilinos_pgi-modules
