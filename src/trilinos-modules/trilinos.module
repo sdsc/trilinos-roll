@@ -2,7 +2,7 @@
 module-whatis "trilinos"
 module-whatis "Version: VERSION"
 module-whatis "Description: trilinos"
-module-whatis "Compiler: COMPILERNAME"
+module-whatis "Compiler: ROLLCOMPILER"
 module-whatis "MPI Flavors: ROLLMPI"
 # Look for MPI flavor in LOADEDMODULES. If no MPI module is loaded, default to
 # first element in ROLLMPI.
@@ -13,8 +13,7 @@ foreach {module} [split $::env(LOADEDMODULES) :] {
     set mpi $module
   }
 }
-setenv TRILINOSHOME /opt/trilinos/COMPILERNAME/$mpi
-prepend-path PATH /opt/trilinos/COMPILERNAME/$mpi/bin
-prepend-path LD_LIBRARY_PATH /opt/trilinos/COMPILERNAME/$mpi/lib
-prepend-path LIBPATH /opt/trilinos/COMPILERNAME/$mpi/lib
-module load netcdf
+setenv TRILINOSHOME /opt/trilinos/ROLLCOMPILER/$mpi
+prepend-path PATH /opt/trilinos/ROLLCOMPILER/$mpi/bin
+prepend-path LD_LIBRARY_PATH /opt/trilinos/ROLLCOMPILER/$mpi/lib
+prepend-path LIBPATH /opt/trilinos/ROLLCOMPILER/$mpi/lib
