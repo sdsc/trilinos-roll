@@ -63,11 +63,16 @@ RPM.EXTRAS=%define __os_install_post /usr/lib/rpm/brp-compress
 include Rules.mk
 include $(SDSCDEVEL)/Pull.mk
 include $(SDSCDEVEL)/Rules.mk
+
 COMPILERLDFLAGS=
 ifeq ("$(COMPILERNAME)", "intel")
   COMPILERLDFLAGS = -lirc
 endif
 
+# The Intel compilers use the C++ libraries that are packaged with the first
+# gnu compiler found in PATH. Since the default system gnu doesn't support
+# C++11, for Intel we have to load /opt/gnu to get the updated library.
+MODULE_LOAD_CXX11_LIB = $(call MODULE_LOAD_COMPILER, gnu, gcc)
 
 SWIG_CACHE = $(REDHAT.ROOT)/cache/build-swig
 MATIO_CACHE = $(REDHAT.ROOT)/cache/build-matio
@@ -109,6 +114,9 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_MPI); \
 	  $(MODULE_LOAD_NETCDF); \
 	  $(MODULE_LOAD_BOOST); \
+	  if test "$(COMPILERNAME)" = "intel"; then \
+	    $(MODULE_LOAD_CXX11_LIB); \
+	  fi; \
 	  if test ! -e $(SWIG_CACHE); then \
 	    cd $(SWIG_DIR); \
 	    ./configure CC=$(CC) CXX=$(CXX) --prefix=$(SWIG_CACHE); \
