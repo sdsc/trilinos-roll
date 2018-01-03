@@ -60,7 +60,8 @@ END
   $output = `module load $compiler trilinos; echo \$TRILINOSHOME 2>&1`;
   my $firstmpi = $MPIS[0];
   $firstmpi =~ s#/.*##;
-  like($output, qr#/opt/trilinos/$compiler/$firstmpi#, 'trilinos modulefile defaults to first mpi');
+  my $compilerName = (split('/', $compiler))[0];
+  like($output, qr#/opt/trilinos/$compilerName/$firstmpi#, 'trilinos modulefile defaults to first mpi');
 }
 
 SKIP: {
