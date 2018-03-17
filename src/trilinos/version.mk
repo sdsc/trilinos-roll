@@ -14,7 +14,7 @@ endif
 
 NAME           = sdsc-trilinos_$(COMPILERNAME)_$(MPINAME)
 VERSION        = 12.12.1
-RELEASE        = 0
+RELEASE        = 1
 PKGROOT        = /opt/trilinos/$(COMPILERNAME)/$(MPINAME)
 
 SRC_SUBDIR     = trilinos
@@ -39,4 +39,5 @@ MATIO_DIR      = $(MATIO_PKG:%.$(MATIO_SUFFIX)=%)
 
 TAR_GZ_PKGS    = $(SOURCE_PKG) $(SWIG_PKG) $(MATIO_PKG)
 
-RPM.EXTRAS     = AutoReq:No
+RPM.EXTRAS     = AutoReq:No\nAutoProv:No
+RPM.PREFIX     = $(PKGROOT)
