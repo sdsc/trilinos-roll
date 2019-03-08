@@ -13,16 +13,17 @@ ifndef ROLLPY
 endif
 
 NAME           = sdsc-trilinos_$(COMPILERNAME)_$(MPINAME)
-VERSION        = 12.12.1
-RELEASE        = 1
+VERSION        = 12.14.1
+RELEASE        = 0
 PKGROOT        = /opt/trilinos/$(COMPILERNAME)/$(MPINAME)
 
 SRC_SUBDIR     = trilinos
 
 SOURCE_NAME    = trilinos
+SOURCE_CAP_NAME = $(subst t,T,$(SOURCE_NAME))
 SOURCE_SUFFIX  = tar.gz
-SOURCE_VERSION = $(VERSION)
-SOURCE_PKG     = $(SOURCE_NAME)-$(SOURCE_VERSION)-Source.$(SOURCE_SUFFIX)
+SOURCE_VERSION = $(subst .,-,$(VERSION))
+SOURCE_PKG     = $(SOURCE_CAP_NAME)-$(SOURCE_NAME)-release-$(SOURCE_VERSION).$(SOURCE_SUFFIX)
 SOURCE_DIR     = $(SOURCE_PKG:%.$(SOURCE_SUFFIX)=%)
 
 SWIG_NAME      = swig
@@ -33,7 +34,7 @@ SWIG_DIR       = $(SWIG_PKG:%.$(SWIG_SUFFIX)=%)
 
 MATIO_NAME     = matio
 MATIO_SUFFIX   = tar.gz
-MATIO_VERSION  = 1.5.11
+MATIO_VERSION  = 1.5.13
 MATIO_PKG      = $(MATIO_NAME)-$(MATIO_VERSION).$(MATIO_SUFFIX)
 MATIO_DIR      = $(MATIO_PKG:%.$(MATIO_SUFFIX)=%)
 
