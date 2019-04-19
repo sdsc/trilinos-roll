@@ -104,6 +104,8 @@ LICENSE: $(SRC_DIRS)
 	echo BSD and LPGL and GPL and others > $@
 
 build: $(SRC_DIRS)
+	patch $(SOURCE_DIR)/packages/PyTrilinos/src/Tpetra.i patch-files/Tpetra.i.patch
+	patch $(SOURCE_DIR)/packages/kokkos-kernels/src/impl/tpls/KokkosBlas1_axpby_tpl_spec_decl.hpp patch-files/KokkosBlas1_axpby_tpl_spec_decl.hpp.patch
 	( \
 	  $(MODULE_LOAD_PYTHON); \
 	  $(MODULE_LOAD_CC); \

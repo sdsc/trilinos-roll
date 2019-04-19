@@ -6,7 +6,7 @@ This roll bundles the Trilinos scientific software framework.
 
 For more information about trilinos please visit the official web page:
 
-- <a href="http://trilinos.sandia.gov/citing.html" target="_blank">Trilinos</a> is an effort to develop algorithms and enabling technologies within an object-oriented software framework for the solution of large-scale, complex multi-physics engineering and scientific problems.
+- <a href="http://trilinos.org" target="_blank">Trilinos</a> is an effort to develop algorithms and enabling technologies within an object-oriented software framework for the solution of large-scale, complex multi-physics engineering and scientific problems.
 
 
 ## Requirements
