@@ -107,7 +107,6 @@ build: $(SRC_DIRS)
 	patch $(SOURCE_DIR)/packages/PyTrilinos/src/Tpetra.i patch-files/Tpetra.i.patch
 	patch $(SOURCE_DIR)/packages/kokkos-kernels/src/impl/tpls/KokkosBlas1_axpby_tpl_spec_decl.hpp patch-files/KokkosBlas1_axpby_tpl_spec_decl.hpp.patch
 	( \
-	  $(MODULE_LOAD_PYTHON); \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MKL); \
@@ -115,6 +114,7 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_MPI); \
 	  $(MODULE_LOAD_NETCDF); \
 	  $(MODULE_LOAD_BOOST); \
+	  $(MODULE_LOAD_PYTHON); \
 	  if test "$(COMPILERNAME)" = "intel"; then \
 	    $(MODULE_LOAD_CXX11_LIB); \
 	  fi; \
@@ -194,6 +194,13 @@ install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
 	$(PKGROOT_BIND_MOUNT)
 	( \
+	  $(MODULE_LOAD_CC); \
+	  $(MODULE_LOAD_CMAKE); \
+	  $(MODULE_LOAD_MKL); \
+	  export MKLLIB=$${MKLHOME}/lib/intel64; \
+	  $(MODULE_LOAD_MPI); \
+	  $(MODULE_LOAD_NETCDF); \
+	  $(MODULE_LOAD_BOOST); \
 	  $(MODULE_LOAD_PYTHON); \
 	  cd /tmp/build; \
 	  make install; \
