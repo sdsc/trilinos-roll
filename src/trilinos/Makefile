@@ -64,11 +64,8 @@ include $(SDSCDEVEL)/Pull.mk
 include $(SDSCDEVEL)/Rules.mk
 
 COMPILERLDFLAGS=
-PGICOMPILE=
 ifeq ("$(COMPILERNAME)", "intel")
   COMPILERLDFLAGS = -lirc
-else ("$(COMPILERNAME)", "pgi")
-  PGICOMPILE = -DTPL_ENABLE_BoostLib=OFF
 endif
 
 # The Intel compilers use the C++ libraries that are packaged with the first
@@ -109,7 +106,6 @@ LICENSE: $(SRC_DIRS)
 build: $(SRC_DIRS)
 	patch $(SOURCE_DIR)/packages/PyTrilinos/src/Tpetra.i patch-files/Tpetra.i.patch
 	patch $(SOURCE_DIR)/packages/kokkos-kernels/src/impl/tpls/KokkosBlas1_axpby_tpl_spec_decl.hpp patch-files/KokkosBlas1_axpby_tpl_spec_decl.hpp.patch
-	patch $(SOURCE_DIR)/packages/seacas/libraries/aprepro_lib/apr_aprepro.cc patch-files/apr_aprepro.cc.patch
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
@@ -178,7 +174,7 @@ build: $(SRC_DIRS)
                 -DBoostLib_LIBRARY_DIRS=$${BOOSTHOME}/lib \
                 -DTPL_Matio_INCLUDE_DIRS=$(MATIO_CACHE)/include \
                 -DTPL_Matio_LIBRARIES=$(MATIO_CACHE)/include \
-                -DHAVE_GNUMAKE=YES $(PGICOMPILE) \
+                -DHAVE_GNUMAKE=YES \
 	        $(CURDIR)/$(SOURCE_DIR) ; \
 	  $(MAKE) -f $(PWD)/Makefile unique-opts; \
 	  $(MAKE) -j 16; \
