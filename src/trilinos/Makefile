@@ -109,7 +109,7 @@ LICENSE: $(SRC_DIRS)
 build: $(SRC_DIRS)
 	patch $(SOURCE_DIR)/packages/PyTrilinos/src/Tpetra.i patch-files/Tpetra.i.patch
 	patch $(SOURCE_DIR)/packages/kokkos-kernels/src/impl/tpls/KokkosBlas1_axpby_tpl_spec_decl.hpp patch-files/KokkosBlas1_axpby_tpl_spec_decl.hpp.patch
-	patch $(SOURCE_DIR)/packages/seacas/libraries/aprepro_lib/apr_aprepro.cc patch-files/apr_aprepro.cc
+	patch $(SOURCE_DIR)/packages/seacas/libraries/aprepro_lib/apr_aprepro.cc patch-files/apr_aprepro.cc.patch
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
