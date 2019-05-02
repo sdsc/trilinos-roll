@@ -1,0 +1,23 @@
+--- Trilinos-trilinos-release-12-14-1/packages/kokkos-kernels/src/impl/tpls/KokkosBlas1_axpby_tpl_spec_decl.hpp	2019-02-27 05:42:22.000000000 -0800
++++ patch-files/KokkosBlas1_axpby_tpl_spec_decl.hpp	2019-03-11 18:12:28.293146681 -0700
+@@ -48,16 +48,16 @@
+ #ifdef KOKKOSKERNELS_ENABLE_TPL_BLAS
+ extern "C" void daxpy_( const int* N, const double* alpha,
+                                       const double* x, const int* x_inc,
+-                                      const double* y, const int* y_inc);
++                                      double* y, const int* y_inc);
+ extern "C" void saxpy_( const int* N, const float* alpha,
+                                       const float* x, const int* x_inc,
+-                                      const float* y, const int* y_inc);
++                                      float* y, const int* y_inc);
+ extern "C" void zaxpy_( const int* N, const std::complex<double>* alpha,
+                                       const std::complex<double>* x, const int* x_inc,
+-                                      const std::complex<double>* y, const int* y_inc);
++                                      std::complex<double>* y, const int* y_inc);
+ extern "C" void caxpy_( const int* N, const std::complex<float>* alpha,
+                                       const std::complex<float>* x, const int* x_inc,
+-                                      const std::complex<float>* y, const int* y_inc);
++                                      std::complex<float>* y, const int* y_inc);
+ 
+ namespace KokkosBlas {
+ namespace Impl {
