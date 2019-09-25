@@ -136,6 +136,9 @@ build: $(SRC_DIRS)
 	           -lpthread"; \
 	  export PATH=$(SWIG_CACHE)/bin:$${PATH}; \
           export LDFLAGS="-lrt $(COMPILERLDFLAGS) -L$${NETCDFHOME}/lib -lnetcdf -L$(MATIO_CACHE)/lib -lmatio"; \
+          mkdir $(REDHAT.ROOT)/src/trilinos/tmp.$$$$; \
+          ln -s `which python3` $(REDHAT.ROOT)/src/trilinos/tmp.$$$$/python; \
+          export PATH=$(REDHAT.ROOT)/src/trilinos/tmp.$$$$:$$PATH; \
 	  cmake -DCMAKE_INSTALL_PREFIX:PATH=$(PKGROOT) \
 	        -DCMAKE_BUILD_TYPE:STRING=DEBUG \
                 -DTrilinos_CXX11_FLAGS="-std=c++11" \
@@ -178,6 +181,7 @@ build: $(SRC_DIRS)
 	        $(CURDIR)/$(SOURCE_DIR) ; \
 	  $(MAKE) -f $(PWD)/Makefile unique-opts; \
 	  $(MAKE) -j 16; \
+          rm -rf $(REDHAT.ROOT)/src/trilinos/tmp.$$$$; \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
@@ -202,9 +206,13 @@ install::
 	  $(MODULE_LOAD_NETCDF); \
 	  $(MODULE_LOAD_BOOST); \
 	  $(MODULE_LOAD_PYTHON); \
+          mkdir $(REDHAT.ROOT)/src/trilinos/tmp.$$$$; \
+          ln -s `which python3` $(REDHAT.ROOT)/src/trilinos/tmp.$$$$/python; \
+          export PATH=$(REDHAT.ROOT)/src/trilinos/tmp.$$$$:$$PATH; \
 	  cd /tmp/build; \
 	  make install; \
           cp -r $(MATIO_CACHE)/lib/* $(PKGROOT)/lib; \
+          rm -rf $(REDHAT.ROOT)/src/trilinos/tmp.$$$$; \
 	)
 	$(PKGROOT_BIND_UMOUNT)
 	rm -rf /tmp/build

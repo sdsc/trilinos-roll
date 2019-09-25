@@ -14,7 +14,7 @@ endif
 
 NAME           = sdsc-trilinos_$(COMPILERNAME)_$(MPINAME)
 VERSION        = 12.14.1
-RELEASE        = 0
+RELEASE        = 1
 PKGROOT        = /opt/trilinos/$(COMPILERNAME)/$(MPINAME)
 
 SRC_SUBDIR     = trilinos
