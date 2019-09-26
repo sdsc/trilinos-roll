@@ -40,5 +40,5 @@ MATIO_DIR      = $(MATIO_PKG:%.$(MATIO_SUFFIX)=%)
 
 TAR_GZ_PKGS    = $(SOURCE_PKG) $(SWIG_PKG) $(MATIO_PKG)
 
-RPM.EXTRAS     = AutoReq:No\nAutoProv:No
+RPM.EXTRAS     = AutoReq:No\nAutoProv:No\n%global _python_bytecompile_errors_terminate_build 0
 RPM.PREFIX     = $(PKGROOT)
