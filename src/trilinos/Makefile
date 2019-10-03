@@ -105,7 +105,16 @@ LICENSE: $(SRC_DIRS)
 build: $(SRC_DIRS)
 	patch $(SOURCE_DIR)/packages/PyTrilinos/src/Tpetra.i patch-files/Tpetra.i.patch
 	patch $(SOURCE_DIR)/packages/kokkos-kernels/src/impl/tpls/KokkosBlas1_axpby_tpl_spec_decl.hpp patch-files/KokkosBlas1_axpby_tpl_spec_decl.hpp.patch
+	patch $(SOURCE_DIR)/packages/epetraext/cmake/FindPythonInclude.cmake patch-files/FindPythonInclude.cmake.patch
 	( \
+          PYTHONFILES=`find . -name \*.py`; \
+          for file in $${PYTHONFILES};  do  \
+              sed -i 's/#\!\/usr\/bin\/env python$$/#\!\/usr\/bin\/env python3/' $${file}; \
+              sed -i 's/#\! \/usr\/bin\/env python$$/#\!\/usr\/bin\/env python3/' $${file}; \
+              sed -i 's/#\!\/usr\/bin\/python$$/#\!\/usr\/bin\/python3/' $${file}; \
+              sed -i 's/#\!\/bin\/env python$$/#\!\/usr\/bin\/env python3/' $${file}; \
+              sed -i 's/#\!\/usr\/netpub\/python-2.7\/bin\/python$$/#\!\/usr\/bin\/python3/' $${file}; \
+          done; \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MKL); \
@@ -114,6 +123,13 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_NETCDF); \
 	  $(MODULE_LOAD_BOOST); \
 	  $(MODULE_LOAD_PYTHON); \
+          python_version=`python3 -c "from __future__ import print_function;import sys; print(sys.version[:3])"`; \
+          python_version="$${python_version}m"; \
+          perl -pi -e "s!PYTHONVERSION!$${python_version}!g" $(SOURCE_DIR)/packages/epetraext/cmake/FindPythonInclude.cmake; \
+          perl -pi -e "s!PYTHONINCLUDE!$${PYTHONROOT}/include/python$${python_version}!g" $(SOURCE_DIR)/packages/epetraext/cmake/FindPythonInclude.cmake; \
+          mkdir $(REDHAT.ROOT)/src/trilinos/bin; \
+          ln -s `which python3` $(REDHAT.ROOT)/src/trilinos/bin/python; \
+          export PATH=$(REDHAT.ROOT)/src/trilinos/bin:$${PATH}; \
 	  if test "$(COMPILERNAME)" = "intel"; then \
 	    $(MODULE_LOAD_CXX11_LIB); \
 	  fi; \
@@ -135,9 +151,6 @@ build: $(SRC_DIRS)
 	           -lpthread"; \
 	  export PATH=$(SWIG_CACHE)/bin:$${PATH}; \
           export LDFLAGS="-lrt $(COMPILERLDFLAGS) -L$${NETCDFHOME}/lib -lnetcdf -L$(MATIO_CACHE)/lib -lmatio"; \
-          mkdir $(REDHAT.ROOT)/src/trilinos/bin; \
-          ln -s `which python3` $(REDHAT.ROOT)/src/trilinos/bin/python; \
-          export PATH=$(REDHAT.ROOT)/src/trilinos/bin:$${PATH}; \
 	  cmake -DCMAKE_INSTALL_PREFIX:PATH=$(PKGROOT) \
 	        -DCMAKE_BUILD_TYPE:STRING=DEBUG \
                 -DTrilinos_CXX11_FLAGS="-std=c++11" \
@@ -178,6 +191,8 @@ build: $(SRC_DIRS)
                 -DTPL_Matio_LIBRARIES=$(MATIO_CACHE)/include \
                 -DHAVE_GNUMAKE=YES \
                 -DPyTrilinos_ENABLE_Isorropia=OFF \
+                -DPYTHON_EXECUTABLE=`which python` \
+                -DPYTHON_INCLUDE_PATH=/opt/python/include/python3.6m \
 	        $(CURDIR)/$(SOURCE_DIR) ; \
 	  $(MAKE) -f $(PWD)/Makefile unique-opts; \
 	  $(MAKE) -j 16; \

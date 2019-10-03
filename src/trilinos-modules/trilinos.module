@@ -54,7 +54,7 @@ setenv TRILINOSHOME /opt/trilinos/$compiler/$mpi
 prepend-path PATH /opt/trilinos/$compiler/$mpi/bin
 prepend-path LD_LIBRARY_PATH /opt/trilinos/$compiler/$mpi/lib
 prepend-path LIBPATH /opt/trilinos/$compiler/$mpi/lib
-module load netcdf
+module load netcdf boost python
 if {"$compiler" == "intel"} {
   # Pick up newer C++ r/t libraries
   module load gnu
