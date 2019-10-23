@@ -67,10 +67,7 @@ ifeq ("$(COMPILERNAME)", "intel")
   COMPILERLDFLAGS = -lirc
 endif
 
-# The Intel compilers use the C++ libraries that are packaged with the first
-# gnu compiler found in PATH. Since the default system gnu doesn't support
-# C++11, for Intel we have to load /opt/gnu to get the updated library.
-MODULE_LOAD_CXX11_LIB = $(call MODULE_LOAD_COMPILER, gnu, gcc)
+MODULE_LOAD_GNU = $(call MODULE_LOAD_COMPILER,gnu,gcc)
 
 SWIG_CACHE = $(REDHAT.ROOT)/cache/build-swig
 MATIO_CACHE = $(REDHAT.ROOT)/cache/build-matio
@@ -93,9 +90,6 @@ DESCRIPTION:
 	) > $@
 
 LICENSE: $(SRC_DIRS)
-	for F in $(SWIG_LICENSE_FILES); do \
-	  cp swig*/$$F $(SOURCE_DIR)/swig-$$F; \
-	done
 	for F in $(MATIO_LICENSE_FILES); do \
 	  cp matio*/$$F $(SOURCE_DIR)/matio-$$F; \
 	done
@@ -115,6 +109,7 @@ build: $(SRC_DIRS)
               sed -i 's/#\!\/bin\/env python$$/#\!\/usr\/bin\/env python3/' $${file}; \
               sed -i 's/#\!\/usr\/netpub\/python-2.7\/bin\/python$$/#\!\/usr\/bin\/python3/' $${file}; \
           done; \
+          $(MODULE_LOAD_GNU); \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MKL); \
@@ -130,16 +125,6 @@ build: $(SRC_DIRS)
           mkdir $(REDHAT.ROOT)/src/trilinos/bin; \
           ln -s `which python3` $(REDHAT.ROOT)/src/trilinos/bin/python; \
           export PATH=$(REDHAT.ROOT)/src/trilinos/bin:$${PATH}; \
-	  if test "$(COMPILERNAME)" = "intel"; then \
-	    $(MODULE_LOAD_CXX11_LIB); \
-	  fi; \
-	  if test ! -e $(SWIG_CACHE); then \
-	    cd $(SWIG_DIR); \
-	    ./configure CC=$(CC) CXX=$(CXX) --prefix=$(SWIG_CACHE); \
-	    $(MAKE) -j 16 ; \
-	    $(MAKE)  -j 16 install; \
-	    cd ..; \
-	  fi; \
           cd $(MATIO_DIR); \
           bash configure CC=$(CC) CXX=$(CXX) --prefix=$(MATIO_CACHE); \
           make; \
@@ -149,7 +134,7 @@ build: $(SRC_DIRS)
           cd /tmp/build; \
 	  MKLLINK="-L$${MKLLIB} -lmkl_intel_lp64 -lmkl_sequential -lmkl_core \
 	           -lpthread"; \
-	  export PATH=$(SWIG_CACHE)/bin:$${PATH}; \
+ 	  export PATH=$(SWIG_CACHE)/bin:$${PATH}; \
           export LDFLAGS="-lrt $(COMPILERLDFLAGS) -L$${NETCDFHOME}/lib -lnetcdf -L$(MATIO_CACHE)/lib -lmatio"; \
 	  cmake -DCMAKE_INSTALL_PREFIX:PATH=$(PKGROOT) \
 	        -DCMAKE_BUILD_TYPE:STRING=DEBUG \

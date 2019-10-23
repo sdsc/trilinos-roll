@@ -51,9 +51,12 @@ if [info exists env(TRILINOSHOME)] {
 }
 
 setenv TRILINOSHOME /opt/trilinos/$compiler/$mpi
+set lib [glob -nocomplain $::env(TRILINOSHOME)/lib*/python*/site-packages]
 prepend-path PATH /opt/trilinos/$compiler/$mpi/bin
 prepend-path LD_LIBRARY_PATH /opt/trilinos/$compiler/$mpi/lib
 prepend-path LIBPATH /opt/trilinos/$compiler/$mpi/lib
+prepend-path PYTHONPATH $lib
+prepend-path PYTHONPATH $lib/PyTrilinos
 module load netcdf boost python
 if {"$compiler" == "intel"} {
   # Pick up newer C++ r/t libraries
