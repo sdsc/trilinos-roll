@@ -63,11 +63,13 @@ include $(SDSCDEVEL)/Pull.mk
 include $(SDSCDEVEL)/Rules.mk
 
 COMPILERLDFLAGS=
+PYTRILINOS = OFF
 ifeq ("$(COMPILERNAME)", "intel")
   COMPILERLDFLAGS = -lirc
 endif
-
-MODULE_LOAD_GNU = $(call MODULE_LOAD_COMPILER,gnu,gcc)
+ifeq ("$(COMPILERNAME)", "gnu")
+  PYTRILINOS = ON
+endif
 
 SWIG_CACHE = $(REDHAT.ROOT)/cache/build-swig
 MATIO_CACHE = $(REDHAT.ROOT)/cache/build-matio
@@ -109,7 +111,6 @@ build: $(SRC_DIRS)
               sed -i 's/#\!\/bin\/env python$$/#\!\/usr\/bin\/env python3/' $${file}; \
               sed -i 's/#\!\/usr\/netpub\/python-2.7\/bin\/python$$/#\!\/usr\/bin\/python3/' $${file}; \
           done; \
-          $(MODULE_LOAD_GNU); \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MKL); \
@@ -148,7 +149,7 @@ build: $(SRC_DIRS)
 	        -DTrilinos_ENABLE_CTrilinos:BOOL=ON \
 	        -DTrilinos_ENABLE_ForTrilinos:BOOL=OFF \
 	        -DTrilinos_ENABLE_TESTS:BOOL=ON \
-	        -DTrilinos_ENABLE_PyTrilinos:BOOL=ON \
+	        -DTrilinos_ENABLE_PyTrilinos:BOOL=$(PYTRILINOS) \
                 -DTrilinos_ENABLE_SEACAS:BOOL=ON \
 	        -DTPL_BLAS_LIBRARIES:STRING="$${MKLLINK}" \
 	        -DTPL_LAPACK_LIBRARIES:STRING="$${MKLLINK}" \
