@@ -1,4 +1,3 @@
-# $Id$
 #
 # @Copyright@
 #
@@ -53,10 +52,62 @@
 #
 # @Copyright@
 #
+# $Log$
 
+REDHAT.ROOT = $(CURDIR)/../../
+RPM.EXTRAS=%define __os_install_post /usr/lib/rpm/brp-compress
 
-SRCDIRS = `find . -maxdepth 1 -type d -not -name CVS -not -name .`
-SRCDIRS = `find . -maxdepth 1 -type d \
-        -not -name CVS \
-        -not -name trilinos \
-        -not -name .` trilinos
+-include $(ROCKSROOT)/etc/Rules.mk
+include Rules.mk
+include $(SDSCDEVEL)/Pull.mk
+include $(SDSCDEVEL)/Rules.mk
+
+COMPILERLDFLAGS=
+ifeq ("$(COMPILERNAME)", "intel")
+  COMPILERLDFLAGS = -lirc
+endif
+
+# The Intel compilers use the C++ libraries that are packaged with the first
+# gnu compiler found in PATH. Since the default system gnu doesn't support
+# C++11, for Intel we have to load /opt/gnu to get the updated library.
+MODULE_LOAD_CXX11_LIB = $(call MODULE_LOAD_COMPILER, gnu, gcc)
+
+SWIG_CACHE = $(REDHAT.ROOT)/cache/build-swig
+
+$(NAME).spec: DESCRIPTION LICENSE
+
+DESCRIPTION:
+	$(MODULE_LOAD_CC); \
+	$(MODULE_LOAD_PYTHON); \
+	( \
+	  $(DESCRIBE_PKG); \
+	  $(DESCRIBE_CC); \
+          $(DESCRIBE_PYTHON) \
+	) > $@
+
+LICENSE: $(SRC_DIRS)
+	$(CHECK_LICENSE_FILES)
+	echo  GPL > $@
+
+build: $(SRC_DIRS)
+	( \
+	  $(MODULE_LOAD_CC); \
+          $(MODULE_LOAD_PYTHON); \
+	  cd $(SOURCE_DIR); \
+	  ./configure CC=$(CC) CXX=$(CXX) --prefix=$(SWIG_CACHE) --with-python=`which python3`; \
+	  $(MAKE) -j 16 \
+	)
+	@echo "::: Package $(NAME) build complete :::"
+
+install::
+	( \
+	  $(MODULE_LOAD_CC); \
+          $(MODULE_LOAD_PYTHON); \
+	  cd $(SOURCE_DIR); \
+	  $(MAKE) install \
+	)
+	$(INSTALL_LICENSE_FILES)
+	@echo "::: Package $(NAME) install complete :::"
+
+clean::
+	rm -rf $(SRC_DIRS) DESCRIPTION LICENSE

@@ -1,4 +1,3 @@
-# $Id$
 #
 # @Copyright@
 #
@@ -64,14 +63,13 @@ include $(SDSCDEVEL)/Pull.mk
 include $(SDSCDEVEL)/Rules.mk
 
 COMPILERLDFLAGS=
+PYTRILINOS = OFF
 ifeq ("$(COMPILERNAME)", "intel")
   COMPILERLDFLAGS = -lirc
 endif
-
-# The Intel compilers use the C++ libraries that are packaged with the first
-# gnu compiler found in PATH. Since the default system gnu doesn't support
-# C++11, for Intel we have to load /opt/gnu to get the updated library.
-MODULE_LOAD_CXX11_LIB = $(call MODULE_LOAD_COMPILER, gnu, gcc)
+ifeq ("$(COMPILERNAME)", "gnu")
+  PYTRILINOS = ON
+endif
 
 SWIG_CACHE = $(REDHAT.ROOT)/cache/build-swig
 MATIO_CACHE = $(REDHAT.ROOT)/cache/build-matio
@@ -94,9 +92,6 @@ DESCRIPTION:
 	) > $@
 
 LICENSE: $(SRC_DIRS)
-	for F in $(SWIG_LICENSE_FILES); do \
-	  cp swig*/$$F $(SOURCE_DIR)/swig-$$F; \
-	done
 	for F in $(MATIO_LICENSE_FILES); do \
 	  cp matio*/$$F $(SOURCE_DIR)/matio-$$F; \
 	done
@@ -106,7 +101,16 @@ LICENSE: $(SRC_DIRS)
 build: $(SRC_DIRS)
 	patch $(SOURCE_DIR)/packages/PyTrilinos/src/Tpetra.i patch-files/Tpetra.i.patch
 	patch $(SOURCE_DIR)/packages/kokkos-kernels/src/impl/tpls/KokkosBlas1_axpby_tpl_spec_decl.hpp patch-files/KokkosBlas1_axpby_tpl_spec_decl.hpp.patch
+	patch $(SOURCE_DIR)/packages/epetraext/cmake/FindPythonInclude.cmake patch-files/FindPythonInclude.cmake.patch
 	( \
+          PYTHONFILES=`find . -name \*.py`; \
+          for file in $${PYTHONFILES};  do  \
+              sed -i 's/#\!\/usr\/bin\/env python$$/#\!\/usr\/bin\/env python3/' $${file}; \
+              sed -i 's/#\! \/usr\/bin\/env python$$/#\!\/usr\/bin\/env python3/' $${file}; \
+              sed -i 's/#\!\/usr\/bin\/python$$/#\!\/usr\/bin\/python3/' $${file}; \
+              sed -i 's/#\!\/bin\/env python$$/#\!\/usr\/bin\/env python3/' $${file}; \
+              sed -i 's/#\!\/usr\/netpub\/python-2.7\/bin\/python$$/#\!\/usr\/bin\/python3/' $${file}; \
+          done; \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MKL); \
@@ -115,16 +119,13 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_NETCDF); \
 	  $(MODULE_LOAD_BOOST); \
 	  $(MODULE_LOAD_PYTHON); \
-	  if test "$(COMPILERNAME)" = "intel"; then \
-	    $(MODULE_LOAD_CXX11_LIB); \
-	  fi; \
-	  if test ! -e $(SWIG_CACHE); then \
-	    cd $(SWIG_DIR); \
-	    ./configure CC=$(CC) CXX=$(CXX) --prefix=$(SWIG_CACHE); \
-	    $(MAKE) -j 16 ; \
-	    $(MAKE)  -j 16 install; \
-	    cd ..; \
-	  fi; \
+          python_version=`python3 -c "from __future__ import print_function;import sys; print(sys.version[:3])"`; \
+          python_version="$${python_version}m"; \
+          perl -pi -e "s!PYTHONVERSION!$${python_version}!g" $(SOURCE_DIR)/packages/epetraext/cmake/FindPythonInclude.cmake; \
+          perl -pi -e "s!PYTHONINCLUDE!$${PYTHONROOT}/include/python$${python_version}!g" $(SOURCE_DIR)/packages/epetraext/cmake/FindPythonInclude.cmake; \
+          mkdir $(REDHAT.ROOT)/src/trilinos/bin; \
+          ln -s `which python3` $(REDHAT.ROOT)/src/trilinos/bin/python; \
+          export PATH=$(REDHAT.ROOT)/src/trilinos/bin:$${PATH}; \
           cd $(MATIO_DIR); \
           bash configure CC=$(CC) CXX=$(CXX) --prefix=$(MATIO_CACHE); \
           make; \
@@ -134,7 +135,7 @@ build: $(SRC_DIRS)
           cd /tmp/build; \
 	  MKLLINK="-L$${MKLLIB} -lmkl_intel_lp64 -lmkl_sequential -lmkl_core \
 	           -lpthread"; \
-	  export PATH=$(SWIG_CACHE)/bin:$${PATH}; \
+ 	  export PATH=$(SWIG_CACHE)/bin:$${PATH}; \
           export LDFLAGS="-lrt $(COMPILERLDFLAGS) -L$${NETCDFHOME}/lib -lnetcdf -L$(MATIO_CACHE)/lib -lmatio"; \
 	  cmake -DCMAKE_INSTALL_PREFIX:PATH=$(PKGROOT) \
 	        -DCMAKE_BUILD_TYPE:STRING=DEBUG \
@@ -148,7 +149,7 @@ build: $(SRC_DIRS)
 	        -DTrilinos_ENABLE_CTrilinos:BOOL=ON \
 	        -DTrilinos_ENABLE_ForTrilinos:BOOL=OFF \
 	        -DTrilinos_ENABLE_TESTS:BOOL=ON \
-	        -DTrilinos_ENABLE_PyTrilinos:BOOL=ON \
+	        -DTrilinos_ENABLE_PyTrilinos:BOOL=$(PYTRILINOS) \
                 -DTrilinos_ENABLE_SEACAS:BOOL=ON \
 	        -DTPL_BLAS_LIBRARIES:STRING="$${MKLLINK}" \
 	        -DTPL_LAPACK_LIBRARIES:STRING="$${MKLLINK}" \
@@ -175,6 +176,9 @@ build: $(SRC_DIRS)
                 -DTPL_Matio_INCLUDE_DIRS=$(MATIO_CACHE)/include \
                 -DTPL_Matio_LIBRARIES=$(MATIO_CACHE)/include \
                 -DHAVE_GNUMAKE=YES \
+                -DPyTrilinos_ENABLE_Isorropia=OFF \
+                -DPYTHON_EXECUTABLE=`which python` \
+                -DPYTHON_INCLUDE_PATH=/opt/python/include/python3.6m \
 	        $(CURDIR)/$(SOURCE_DIR) ; \
 	  $(MAKE) -f $(PWD)/Makefile unique-opts; \
 	  $(MAKE) -j 16; \
@@ -202,9 +206,11 @@ install::
 	  $(MODULE_LOAD_NETCDF); \
 	  $(MODULE_LOAD_BOOST); \
 	  $(MODULE_LOAD_PYTHON); \
+          export PATH=$(REDHAT.ROOT)/src/trilinos/bin:$${PATH}; \
 	  cd /tmp/build; \
 	  make install; \
           cp -r $(MATIO_CACHE)/lib/* $(PKGROOT)/lib; \
+          rm -rf $(REDHAT.ROOT)/src/trilinos/bin \
 	)
 	$(PKGROOT_BIND_UMOUNT)
 	rm -rf /tmp/build

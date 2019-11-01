@@ -1,0 +1,10 @@
+--- Trilinos-trilinos-release-12-14-1/packages/epetraext/cmake/FindPythonInclude.cmake	2019-02-27 05:42:22.000000000 -0800
++++ patch-files/FindPythonInclude.cmake	2019-10-16 16:57:20.784091008 -0700
+@@ -52,5 +52,6 @@
+ IF(PYTHON_INCLUDE_FOUND AND PYTHON_LIB_FOUND)
+   # We're good
+ ELSE(PYTHON_INCLUDE_FOUND AND PYTHON_LIB_FOUND)
+-  FIND_PACKAGE(PythonLibs)
++  set(PythonLibs PYTHONVERSION)
++  set(PYTHON_INCLUDE PYTHONINCLUDE)
+ ENDIF(PYTHON_INCLUDE_FOUND AND PYTHON_LIB_FOUND)
